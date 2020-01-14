@@ -1,6 +1,12 @@
-# Installing VM with VirtualBox
+# Full remote mode with CLion
 
-This document describes the procedure to follow in order to create 2 VM under VirtualBox (**6.1**) that will be used with CLion. The VM are:
+This document describes how to configure CLion in order to use the full remote mode.
+
+The first step is to setup 2 virtual machines (that will be used as remote hosts).
+
+# VM creation
+
+We create 2 VM under VirtualBox (**6.1**) that will be used with CLion. The VM are:
 
 * Ubuntu 18.04 bionic. Select the [minimal ISO](https://help.ubuntu.com/community/Installation/MinimalCD).
 * Centos 8.0.1905. Select "[CD and DVD ISO Images](https://wiki.centos.org/Download)". The size of the ISO file does not exceed 600Mo.
