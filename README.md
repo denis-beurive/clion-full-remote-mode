@@ -347,3 +347,10 @@ Example:
 **Very important note 2 !!!**: every time you switch the compiler or make changes in your project dependencies, make sure to update header search paths manually by calling **Tools | Resync with Remote Hosts** ([see this documentation](https://www.jetbrains.com/help/clion/remote-projects-support.html#resync)).
 
 ![Resynch with remore host](images/clion-resynch-with-remote-hosts.png)
+
+## Good links
+
+[CLion answers frequently asked questions](https://blog.jetbrains.com/clion/2014/09/clion-answers-frequently-asked-questions/)
+
+[How to properly add include directories with CMake](https://stackoverflow.com/questions/13703647/how-to-properly-add-include-directories-with-cmake)
+
