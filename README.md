@@ -270,6 +270,8 @@ The text below gives more details on the configuration.
 
 ## Deployments
 
+**NOTE**: you don't need to create deployment configurations manually - CLion creates a deployment configuration automatically when a "Remote Host" toolchain is created (see [this link](https://intellij-support.jetbrains.com/hc/en-us/community/posts/360006992440-Configure-CLion-so-it-doesn-t-modify-CMakeLists-txt)). 
+
 `Tools` -> `Deployments` -> `Configuration...`
 
 Click on `Add`, and then follow the instructions. Make sure to choose **FTP**.
@@ -342,11 +344,40 @@ Example:
 	        INCLUDE_DIRECTORIES "${EXTERNAL_HEADERS_PATH}"
 	)
 
-**Very important note 1 !!!**: if your project uses external libraries, then you should store these libraries on the remote host, in directories outside the deployment directory.
-
-**Very important note 2 !!!**: every time you switch the compiler or make changes in your project dependencies, make sure to update header search paths manually by calling **Tools | Resync with Remote Hosts** ([see this documentation](https://www.jetbrains.com/help/clion/remote-projects-support.html#resync)).
+**Very important note**: every time you switch the compiler or make changes in your project dependencies, make sure to update header search paths manually by calling **Tools | Resync with Remote Hosts** ([see this documentation](https://www.jetbrains.com/help/clion/remote-projects-support.html#resync)).
 
 ![Resynch with remore host](images/clion-resynch-with-remote-hosts.png)
+
+## CMakeLists.txt management
+
+### Add to target... or not
+
+You may notice that CLion updates the file "CMakeLists.txt" upon various events.
+For example, when you create a new source file, then CLion may add this file to "CMakeLists.txt".
+This behaviour may be suitable for simple projects. However, for complex ones (with many executables), you probably need to deactivate this feature.
+
+To do that, you just need to uncheck "Add to target" when you create a new file (see [this link](https://intellij-support.jetbrains.com/hc/en-us/community/posts/360006992440-Configure-CLion-so-it-doesn-t-modify-CMakeLists-txt)).
+
+![Add to target](images/clion-add-to-tarhet.png)
+
+### You should specify sources dependencies using relative paths
+
+It is valid practice to specify absolute paths to sources by using the CMake variable `CMAKE_BINARY_DIR`. For example:
+
+	set(LOCAL_SRC_DIRECTORY "${CMAKE_BINARY_DIR}/src")
+	add_library(SL_Lib
+	        "${LOCAL_SRC_DIRECTORY}/SL_Status.c"
+	        "${LOCAL_SRC_DIRECTORY}/SL_Status.h"
+	)
+
+However, this configuration may cause trouble when CLion tries to resync with the remote host.
+
+You should specify relatve paths:
+
+	add_library(SL_Lib
+	        src/SL_Status.c
+	        src/SL_Status.h
+	)
 
 ## Good links
 
