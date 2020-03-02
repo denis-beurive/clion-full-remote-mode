@@ -38,10 +38,11 @@ Detailed configuration:
 
 Connexion from the host to the remote guest:
 
-| VM      | SSH                       | FTP Command channel       | FTP data channels   |
-|---------|---------------------------|---------------------------|---------------------|
-| Ubuntu  | localhost:22  -> guest:22 | localhost:21  -> guest:21 | 6000,6001,6002,6003 |
-| CentOS  | localhost:122 -> guest:22 | localhost:121 -> guest:21 | 6100,6101,6102,6103 |
+| VM       | SSH                       | FTP Command channel       | FTP data channels   |
+|----------|---------------------------|---------------------------|---------------------|
+| Ubuntu   | localhost:22  -> guest:22 | localhost:21  -> guest:21 | 6000,6001,6002,6003 |
+| CentOS 8 | localhost:122 -> guest:22 | localhost:121 -> guest:21 | 6100,6101,6102,6103 |
+| CentOS 6 | localhost:222 -> guest:22 | localhost:221 -> guest:21 | 7100,7101,7102,7103 |
 
 # WARNING
 
@@ -167,7 +168,7 @@ Then, apply the configuration:
 
 > Once this is done, you can reboot the guest. The Guest IP address will be the one you've set.
 
-# CentOS configuration
+# CentOS 8 configuration
 
 ## SFTP server configuration
 
@@ -212,6 +213,96 @@ And then restart the interface:
 
 > Once this is done, you can reboot the guest. The Guest IP address will be the one you've set.
 
+# CentOS 6 configuration
+
+## Prerequisites
+
+You must make sure that:
+
+* SELinux is disabled
+* The firewall is disabled
+
+### Disabling SELinux
+
+Check the status of SELinux:
+
+	[root@localhost vsftpd]# sestatus
+	SELinux status:                 enabled
+	SELinuxfs mount:                /selinux
+	Current mode:                   enforcing
+	Mode from config file:          enforcing
+	Policy version:                 24
+	Policy from config file:        targeted
+
+To disable SELinux:
+
+Edit `/etc/selinux/config`, and set `SELINUX` to `disabled`:
+
+	# This file controls the state of SELinux on the system.
+	# SELINUX= can take one of these three values:
+	#     enforcing - SELinux security policy is enforced.
+	#     permissive - SELinux prints warnings instead of enforcing.
+	#     disabled - No SELinux policy is loaded.
+	SELINUX=disabled
+	# SELINUXTYPE= can take one of these two values:
+	#     targeted - Targeted processes are protected,
+	#     mls - Multi Level Security protection.
+	SELINUXTYPE=targeted
+
+Then reboot: `shutdown -r now`.
+
+### Disabling the firewall
+
+To disable the firewall:
+
+	service iptables save
+	service iptables stop
+	chkconfig iptables off
+	service ip6tables save
+	service ip6tables stop
+	chkconfig ip6tables off
+
+## SFTP server configuration
+
+The configuration file is identical to the one for the Unbuntu guest, except for these values:
+
+	pasv_min_port=7100
+	pasv_max_port=7103
+
+Restart VSFTPD:
+
+	sudo service vsftpd restart
+
+Configure VSFTPD so it will start at boot time:
+
+	chkconfig vsftpd on
+
+### Configure the guest in order to have a static IP
+
+Edit the file `/etc/sysconfig/network-scripts/ifcfg-eth0`.
+
+Set the following content:
+
+	DEVICE=eth0
+	HWADDR=08:00:27:B3:14:72
+	TYPE=Ethernet
+	UUID=d7c5ed3f-c3b8-4539-aced-9ae3fd83502e
+	ONBOOT=yes
+	IPADDR=10.0.2.17
+	PREFIX=24
+	GATEWAY=10.0.2.2
+	NM_CONTROLLED=yes
+	BOOTPROTO=none
+
+Then configure the DNS server. Edit the file: `/etc/resolv.conf`. Set the configuration below:
+
+	nameserver 10.0.24.10
+	nameserver 10.0.24.11
+
+Then reaload the configuration:
+
+	service network restart
+
 # VirtualBox configuration
 
 Among all the available [network modes](https://chrtophe.developpez.com/tutoriels/gestion-reseau-machine-virtuelle/), we select "NAT".
@@ -235,7 +326,7 @@ Among all the available [network modes](https://chrtophe.developpez.com/tutoriel
 
 ![Ubuntu network configuration](images/network-config-ubuntu.png)
 
-**Centos VM**: 
+**Centos 8 VM**: 
 
 | Protocole | Host IP   | Host Port | Guest IP  | Guest Port | Service |
 |-----------|-----------|-----------|-----------|------------|---------|
@@ -248,8 +339,20 @@ Among all the available [network modes](https://chrtophe.developpez.com/tutoriel
 
 ![CentOS network configuration](images/network-config-centos.png)
 
+**Centos 6 VM**: 
+
+| Protocole | Host IP   | Host Port | Guest IP  | Guest Port | Service |
+|-----------|-----------|-----------|-----------|------------|---------|
+| TCP       | 127.0.0.1 | 221       | 10.0.2.16 | 21         | FTP     |
+| TCP       | 127.0.0.1 | 222       | 10.0.2.16 | 22         | SSH     |
+| TCP       | 127.0.0.1 | 7100      | 10.0.2.16 | 7100       | FTP     |
+| TCP       | 127.0.0.1 | 7101      | 10.0.2.16 | 7101       | FTP     |
+| TCP       | 127.0.0.1 | 7102      | 10.0.2.16 | 7102       | FTP     |
+| TCP       | 127.0.0.1 | 7103      | 10.0.2.16 | 7103       | FTP     |
+
 > On the Unbuntu VM, the ports from 6000 to 6003 are reserved from the _FTP passive mode_.
-> On the CentOS VM, the ports from 6100 to 6103 are reserved from the _FTP passive mode_.
+> On the CentOS 8 VM, the ports from 6100 to 6103 are reserved from the _FTP passive mode_.
+> On the CentOS 6 VM, the ports from 7100 to 7103 are reserved from the _FTP passive mode_.
 
 # Prepare the VM
 
