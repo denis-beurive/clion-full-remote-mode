@@ -6,10 +6,11 @@ The first step is to setup 2 virtual machines (that will be used as remote hosts
 
 # VM creation
 
-We create 2 VM under VirtualBox (**6.1**) that will be used with CLion. The VM are:
+We create 3 VM under VirtualBox (**6.1**) that will be used with CLion. The VM are:
 
 * Ubuntu 18.04 bionic. Select the [minimal ISO](https://help.ubuntu.com/community/Installation/MinimalCD).
 * Centos 8.0.1905. Select "[CD and DVD ISO Images](https://wiki.centos.org/Download)". The size of the ISO file does not exceed 600Mo.
+* Centos 6.10. Select "[CentOS-6.10-x86_64-minimal.iso](http://mir01.syntis.net/CentOS/6/isos/x86_64/)".
 
 The VM will be configured as described below:
 
@@ -27,10 +28,15 @@ Ubuntu version:
 	Release:        18.04
 	Codename:       bionic
 
-CentOS version:
+CentOS 8 version:
 
 	[denis@localhost ~]$ cat /etc/centos-release
 	CentOS Linux release 8.0.1905 (Core)
+
+CentOS 6 version:
+
+	[dev@localhost ~]$ cat /etc/centos-release
+	CentOS release 6.10 (Final)
 
 Detailed configuration:
 
@@ -361,6 +367,15 @@ We need to install CMake on the VM.
 CentOS:
 
 	yum install cmake
+
+> On CentOS 6, you will need to install/update GCC, GDB and CMAKE.
+>
+> See these links:
+>
+> * [C++11 on CentOS 6](https://edwards.sdsu.edu/research/c11-on-centos-6/)
+> * [Installing OpenSSL shared libraries on CentOS 6.5](https://unix.stackexchange.com/questions/105969/installing-openssl-shared-libraries-on-centos-6-5)
+> * [Upgrade to devtoolset-8-gdb done but gdb --version still 7.6](https://forums.centos.org/viewtopic.php?t=70893)
+> * The best way to install CMAKE is to compile it from the source.
 
 Ubuntu:
 
