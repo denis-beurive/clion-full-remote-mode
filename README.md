@@ -409,6 +409,7 @@ For the CentOS VM, the configuration is:
 ![Clion CentOS deployment configuration](images/clion-deployment-centos.png)
 
 In the tab `Mappings`, make sure to set the value for the parameter `Deployment path`.
+You should set the path to the directory, on the remote host, where you want the sources to be uploaded.
 
 > To deploy a single file, a directory or the whole project: `[Ctrl]`+`[Maj]`+`[Alt]`+`[x]`.
 
@@ -496,6 +497,38 @@ You should specify relatve paths:
 	        src/SL_Status.c
 	        src/SL_Status.h
 	)
+
+## CMAKE and the error "Cannot create directory"
+
+You may het this error:
+
+![](images/clion-cmake-error-cannot-create-directory.png)
+
+CLion does not give you details... so you are "in the blue".
+
+To get details, you should increase the CLion LOG level. Follow the steps
+described here: [Full Remote Mode: Cannot generate CMake profile ](https://youtrack.jetbrains.com/issue/CPP-17669)
+
+> * Add `#com.jetbrains.cidr.remote` and `#com.jetbrains.ssh.nio`
+>   to _Debug Log Settings_ (`Help` => `Debug Log Settings` **OR** `Help` => `Diagnostic Tools` => `Debug Log Settings`) on separate lines.
+
+![](images/clion-increase-debug.png)
+
+> * Invalidate Cache and Restart CLion (`File` => `Invalidate Caches / Restart ...`)
+
+![](images/clion-invalidate-cache.png)
+
+> * Wait until the problem appears. 
+
+Then look at the CLion LOG file: `Help` => `Show Log In Explorer`.
+
+Search for the test "`cannot create directory`".
+
+For example:
+
+    2020-06-06 11:46:17,289 [  34548]   INFO -         #com.jetbrains.ssh.nio - mkdir: cannot create directory '/projects': Permission denied
+
+All right, so you know what's wrong on the remote host!
 
 ## Good links
 
