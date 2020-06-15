@@ -1,0 +1,63 @@
+cmake_minimum_required(VERSION 3.10)
+project(ged LANGUAGES C)
+
+enable_testing()
+include(CheckIncludeFiles)
+
+set(CMAKE_C_STANDARD 99)
+set(CMAKE_VERBOSE_MAKEFILE off)
+set(CMAKE_LINK_SEARCH_START_STATIC on)
+
+# ----------------------------------------------------------------------------------------
+# Define local environment.
+# ----------------------------------------------------------------------------------------
+
+set(LOCAL_SRC_DIRECTORY "${CMAKE_BINARY_DIR}/src")
+set(LOCAL_BIN_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+
+# ----------------------------------------------------------------------------------------
+# Make sure that the LIBMICROHTTPD library is reachable
+# ----------------------------------------------------------------------------------------
+
+message("Path to LIBMICROHTTPD library (LIBMICROHTTPD_LIBRARY_PATH): $ENV{LIBMICROHTTPD_LIBRARY_PATH}")
+message("Path to LIBMICROHTTPD headers (LIBMICROHTTPD_INCLUDE_PATH): $ENV{LIBMICROHTTPD_INCLUDE_PATH}")
+
+message("TEST - Try to locate <libmicrohttpd.a>")
+find_library(LIB_LIBMICROHTTPD microhttpd HINTS ENV LIBMICROHTTPD_LIBRARY_PATH)
+if(NOT LIB_LIBMICROHTTPD)
+    message(FATAL_ERROR "LIBMICROHTTPD library not found. Please configure LIBMICROHTTPD_LIBRARY_PATH.")
+else()
+    message("OK: LIBMICROHTTPD library found")
+endif()
+
+message("TEST - Try to locate <microhttpd.h>")
+set(CMAKE_REQUIRED_INCLUDES $ENV{LIBMICROHTTPD_INCLUDE_PATH})
+CHECK_INCLUDE_FILES("microhttpd.h" HEADERS_LIBMICROHTTPD LANGUAGE C)
+if(NOT HEADERS_LIBMICROHTTPD)
+    message(FATAL_ERROR "LIBMICROHTTPD header files not found. Please configure LIBMICROHTTPD_INCLUDE_PATH.")
+else()
+    message("OK: LIBMICROHTTPD header files found")
+endif()
+
+# ----------------------------------------------------------------------------------------
+# Set the compiler configuration
+# ----------------------------------------------------------------------------------------
+
+# Note for CLion in Full Remote Mode.
+#   You need to set include_directories() if you want CLion to download all
+#   the required headers.
+
+include_directories($ENV{LIBMICROHTTPD_INCLUDE_PATH})
+link_directories($ENV{LIBMICROHTTPD_LIBRARY_PATH})
+
+# ----------------------------------------------------------------------------------------
+# Build the server
+# ----------------------------------------------------------------------------------------
+
+add_executable(server.exe src/server.c)
+target_link_libraries(server.exe microhttpd)
+set_target_properties(
+        server.exe
+        PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ${LOCAL_BIN_DIRECTORY}
+        EXCLUDE_FROM_ALL off)

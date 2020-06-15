@@ -411,6 +411,12 @@ For the CentOS VM, the configuration is:
 In the tab `Mappings`, make sure to set the value for the parameter `Deployment path`.
 You should set the path to the directory, on the remote host, where you want the sources to be uploaded.
 
+![Clion CentOS deployment configuration](images/clion-deployment-mapping.PNG)
+
+And, because of our FTP limitations, make sure to select **FTP passive mode**:
+
+![Clion CentOS deployment configuration](images/clion-deployment-passive-mode.PNG)
+
 > To deploy a single file, a directory or the whole project: `[Ctrl]`+`[Maj]`+`[Alt]`+`[x]`.
 
 ## SSH terminal
@@ -428,6 +434,8 @@ For the CentOS VM, the configuration is:
 * port: 122
 
 ## Build tool chain
+
+### General
 
 `File` => `Settings` => `Build, Execution, Deployment` => `Toolchains`.
 
@@ -449,6 +457,16 @@ When configuring the connection for the toolchain, make sure to check the checkb
 
 > If you forget to check the checkbox, then the configuration will be lost after an editor restart.
 > You may lose time asking yourself what causes build problems.
+
+### Adding environment variables
+
+You may need to set environment variables prior to execute CMAKE.
+
+> This is very important if the file `CMakeList.txt` makes use of environment variables. For example: [CMakeList.txt](examples/CMakeList-ex1.txt).
+
+You can do that:
+
+![Cmake configuration](images/clion-cmake-configuarion-env.png) 
 
 ## Configuration for auto-completion and code analysis
 
