@@ -121,18 +121,6 @@ Find the gateway:
 
 Gateway is `10.0.2.2`.
 
-Find the DNS:
-
-	dev@ubuntu:~$ systemd-resolve --status
-	...
-         DNS Servers: 10.0.24.10
-                      10.0.24.11
-                      194.2.0.20
-                      194.2.0.50
-                      193.238.148.11
-                      8.8.8.8
-
-DNS servers are `10.0.24.10`and `10.0.24.11`.
 
 Find your IP and your netmask:
 
@@ -151,7 +139,10 @@ You have:
 * **IP**: `10.0.2.15`
 * **netmask**: `255.255.255.0 => /24` (see [this link](https://www.computerhope.com/jargon/n/netmask.htm)).
 * **Gateway**: `10.0.2.2`
-* **DNS**: `10.0.24.10`and `10.0.24.11`.
+
+For the DNS, you can set the following servers: `8.8.8.8` and `8.8.4.4`
+
+
 
 ### Configure the guest in order to have a static IP
 
@@ -164,13 +155,26 @@ Then edit the file `/etc/netplan/01-netcfg.yaml`, and set:
 	    enp0s3:
 	     dhcp4: no
 	     addresses: [10.0.2.15/24]
-	     gateway4: `10.0.2.2
+	     gateway4: `10.0.2.2.
 	     nameservers:
-	       addresses: [10.0.24.10,10.0.24.11]
+	       addresses: [8.8.8.8,8.8.4.4]
 
 Then, apply the configuration:
 
 	sudo netplan apply
+
+Check the DNS configuration:
+
+	$ systemd-resolve --status
+    Link 2 (enp0s3)
+    Current Scopes: DNS
+    LLMNR setting: yes
+    MulticastDNS setting: no
+    DNSSEC setting: no
+    DNSSEC supported: no
+    DNS Servers: 8.8.8.8
+                 8.8.4.4
+    $ ping google.com 
 
 > See [this link](https://linuxconfig.org/how-to-configure-static-ip-address-on-ubuntu-18-10-cosmic-cuttlefish-linux).
 
@@ -212,8 +216,8 @@ Set the following configuration:
 
 Then configure the DNS server. Edit the file: `/etc/resolv.conf`. Set the configuration below:
 
-	nameserver 10.0.24.10
-	nameserver 10.0.24.11
+	nameserver 8.8.8.8
+	nameserver 8.8.4.4
 
 And then restart the interface:
 
@@ -304,8 +308,8 @@ Set the following content:
 
 Then configure the DNS server. Edit the file: `/etc/resolv.conf`. Set the configuration below:
 
-	nameserver 10.0.24.10
-	nameserver 10.0.24.11
+	nameserver 8.8.8.8
+	nameserver 8.8.4.4
 
 Then reaload the configuration:
 
