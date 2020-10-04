@@ -123,7 +123,7 @@ Gateway is `10.0.2.2`.
 
 Find the DNS:
 
-	dev@ubuntu:~$ systemd-resolve --statussystemd-resolve --status
+	dev@ubuntu:~$ systemd-resolve --status
 	...
          DNS Servers: 10.0.24.10
                       10.0.24.11
