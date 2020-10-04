@@ -150,6 +150,8 @@ You have:
 
 * **IP**: `10.0.2.15`
 * **netmask**: `255.255.255.0 => /24` (see [this link](https://www.computerhope.com/jargon/n/netmask.htm)).
+* **Gateway**: `10.0.2.2`
+* **DNS**: `10.0.24.10`and `10.0.24.11`.
 
 ### Configure the guest in order to have a static IP
 
@@ -161,14 +163,14 @@ Then edit the file `/etc/netplan/01-netcfg.yaml`, and set:
 	  ethernets:
 	    enp0s3:
 	     dhcp4: no
-	     addresses: [10.75.3.71/23]
-	     gateway4: 10.75.2.222
+	     addresses: [10.0.2.15/24]
+	     gateway4: `10.0.2.2
 	     nameservers:
 	       addresses: [10.0.24.10,10.0.24.11]
 
 Then, apply the configuration:
 
-	sudo netplan --debug apply
+	sudo netplan apply
 
 > See [this link](https://linuxconfig.org/how-to-configure-static-ip-address-on-ubuntu-18-10-cosmic-cuttlefish-linux).
 
